@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - NoteShare</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #0f172a;
+            color: white;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            height: 70px;
+            padding: 0 40px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: #111827;
+            border-bottom: 1px solid #334155;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #a78bfa;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .student-name {
+            color: #cbd5e1;
+        }
+
+        .logout {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #ef4444;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* MAIN */
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #94a3b8;
+        }
+
+        /* CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 25px;
+            border-radius: 16px;
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        .stat-card h3 {
+            color: #94a3b8;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 30px;
+            font-weight: bold;
+            color: #a78bfa;
+        }
+
+        /* SECTIONS */
+
+        .section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+        }
+
+        /* SEARCH */
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 13px;
+
+            background: #0f172a;
+            color: white;
+
+            border: 1px solid #475569;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .search-box button,
+        .upload-btn {
+            padding: 13px 22px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #8b5cf6;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        /* UPLOAD */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 7px;
+            color: #cbd5e1;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 12px;
+
+            background: #0f172a;
+            color: white;
+
+            border: 1px solid #475569;
+            border-radius: 8px;
+
+            outline: none;
+        }
+
+        .form-group select option {
+            background: #0f172a;
+            color: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .upload-btn {
+            margin-top: 18px;
+        }
+
+        /* NOTES */
+
+        #notesContainer,
+        #myNotesContainer {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .note-card {
+            padding: 20px;
+
+            background: #0f172a;
+
+            border: 1px solid #334155;
+            border-radius: 12px;
+        }
+
+        .note-card h3 {
+            margin-bottom: 10px;
+            color: #e2e8f0;
+        }
+
+        .note-card p {
+            color: #94a3b8;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        .rating-display {
+            color: #fbbf24 !important;
+            font-weight: bold;
+        }
+
+        .note-actions {
+            margin-top: 15px;
+
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .note-actions button {
+            padding: 8px 13px;
+
+            border: none;
+            border-radius: 7px;
+
+            cursor: pointer;
+            color: white;
+        }
+
+        .download {
+            background: #2563eb;
+        }
+
+        .rate {
+            background: #f59e0b;
+        }
+
+        .delete {
+            background: #dc2626;
+        }
+
+        .message {
+            color: #94a3b8;
+        }
+
+        @media (max-width: 800px) {
+
+            .cards,
+            #notesContainer,
+            #myNotesContainer,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 0 20px;
+            }
+
+            .student-name {
+                display: none;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+    <div class="logo">
+        Note<span>Share</span>
+    </div>
+
+    <div class="nav-right">
+
+        <span class="student-name" id="studentName">
+            Student
+        </span>
+
+        <button class="logout" onclick="logout()">
+            Logout
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <!-- WELCOME -->
+
+    <div class="welcome">
+
+        <h1 id="welcomeText">
+            Welcome!
+        </h1>
+
+        <p>
+            Share knowledge. Discover useful study materials.
+        </p>
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="cards">
+
+        <div class="stat-card">
+
+            <h3>Total Notes</h3>
+
+            <p id="totalNotes">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>My Notes</h3>
+
+            <p id="myNotes">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>Available Subjects</h3>
+
+            <p id="totalSubjects">
+                0
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="section">
+
+        <h2>🔍 Search Notes</h2>
+
+        <div class="search-box">
+
+            <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by note title...">
+
+            <button onclick="searchNotes()">
+                Search
+            </button>
+
+            <button onclick="loadNotes()">
+                Show All
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- UPLOAD -->
+
+    <div class="section">
+
+        <h2>📤 Upload Notes</h2>
+
+        <form id="uploadForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>Title</label>
+
+                    <input
+                            type="text"
+                            id="title"
+                            placeholder="Example: DBMS Unit 1 Notes"
+                            required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>Unit Number</label>
+
+                    <input
+                            type="number"
+                            id="unitNumber"
+                            placeholder="Example: 1"
+                            min="1"
+                            required>
+
+                </div>
+
+
+                <!-- SUBJECT DROPDOWN -->
+
+                <div class="form-group">
+
+                    <label>Subject</label>
+
+                    <select id="subjectId" required>
+
+                        <option value="">
+                            Loading subjects...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>PDF File</label>
+
+                    <input
+                            type="file"
+                            id="file"
+                            accept=".pdf"
+                            required>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>Description</label>
+
+                    <textarea
+                            id="description"
+                            rows="3"
+                            placeholder="Short description of the notes"></textarea>
+
+                </div>
+
+            </div>
+
+
+            <button
+                    type="submit"
+                    class="upload-btn">
+
+                Upload PDF
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- NOTES -->
+
+    <div class="section">
+
+        <h2>📚 Available Notes</h2>
+
+        <div id="notesContainer">
+
+            <p class="message">
+                Loading notes...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MY NOTES -->
+
+    <div class="section">
+
+        <h2>👤 My Notes</h2>
+
+        <div id="myNotesContainer">
+
+            <p class="message">
+                Loading your notes...
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* GET LOGGED-IN STUDENT */
+
+    const studentId =
+        localStorage.getItem("studentId");
+
+    const studentName =
+        localStorage.getItem("studentName");
+
+
+    if (!studentId) {
+
+        window.location.href = "/login.html";
+
+    }
+
+
+    document.getElementById("studentName").textContent =
+        studentName || "Student";
+
+
+    document.getElementById("welcomeText").textContent =
+        "Welcome, " + (studentName || "Student") + "!";
+
+
+    /* LOAD SUBJECTS */
+
+    async function loadSubjects() {
+
+        try {
+
+            const response =
+                await fetch("/api/subjects");
+
+            if (!response.ok) {
+                throw new Error("Unable to load subjects");
+            }
+
+            const subjects =
+                await response.json();
+
+            document.getElementById("totalSubjects").textContent =
+                subjects.length;
+
+
+            const subjectSelect =
+                document.getElementById("subjectId");
+
+            subjectSelect.innerHTML =
+                '<option value="">Select Subject</option>';
+
+
+            subjects.forEach(subject => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = subject.id;
+
+                option.textContent =
+                    subject.name +
+                    (subject.code
+                        ? " (" + subject.code + ")"
+                        : "");
+
+                subjectSelect.appendChild(option);
+
+            });
+
+        } catch (error) {
+
+            document.getElementById("totalSubjects").textContent =
+                "0";
+
+            document.getElementById("subjectId").innerHTML =
+                '<option value="">Unable to load subjects</option>';
+
+        }
+
+    }
+
+
+    /* LOAD ALL NOTES */
+
+    async function loadNotes() {
+
+        try {
+
+            const response =
+                await fetch("/api/notes");
+
+            const notes =
+                await response.json();
+
+            displayNotes(notes);
+
+            document.getElementById("totalNotes").textContent =
+                notes.length;
+
+        } catch (error) {
+
+            document.getElementById("notesContainer").innerHTML =
+                "<p class='message'>Unable to load notes.</p>";
+
+        }
+
+    }
+
+
+    /* DISPLAY NOTES */
+
+    async function displayNotes(notes) {
+
+        const container =
+            document.getElementById("notesContainer");
+
+
+        if (notes.length === 0) {
+
+            container.innerHTML =
+                "<p class='message'>No notes found.</p>";
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        for (const note of notes) {
+
+            let averageRating = 0;
+
+            try {
+
+                const ratingResponse =
+                    await fetch(
+                        "/api/ratings/note/" +
+                        note.id +
+                        "/average"
+                    );
+
+                if (ratingResponse.ok) {
+
+                    const ratingData =
+                        await ratingResponse.json();
+
+                    averageRating =
+                        ratingData.averageRating;
+
+                }
+
+            } catch (error) {
+
+                averageRating = 0;
+
+            }
+
+
+            const card =
+                document.createElement("div");
+
+            card.className = "note-card";
+
+
+            card.innerHTML = `
+
+                <h3>
+                    📄 ${note.title}
+                </h3>
+
+                <p>
+                    ${note.description || "No description"}
+                </p>
+
+                <p>
+                    Unit: ${note.unitNumber}
+                </p>
+
+                <p>
+                    Subject:
+                    ${note.subject
+                        ? note.subject.name
+                        : "Unknown"}
+                </p>
+
+                <p>
+                    Uploaded by:
+                    ${note.student
+                        ? note.student.name
+                        : "Unknown"}
+                </p>
+
+                <p class="rating-display">
+                    ⭐ Average Rating:
+                    ${Number(averageRating).toFixed(1)} / 5
+                </p>
+
+                <div class="note-actions">
+
+                    <button
+                        class="download"
+                        onclick="downloadNote(${note.id})">
+
+                        📥 Download
+
+                    </button>
+
+                    <button
+                        class="rate"
+                        onclick="rateNote(${note.id})">
+
+                        ⭐ Rate
+
+                    </button>
+
+                </div>
+            `;
+
+
+            container.appendChild(card);
+
+        }
+
+    }
+
+
+    /* SEARCH */
+
+    async function searchNotes() {
+
+        const title =
+            document
+                .getElementById("searchInput")
+                .value
+                .trim();
+
+
+        if (!title) {
+
+            loadNotes();
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/notes/search?title=" +
+                    encodeURIComponent(title)
+                );
+
+
+            const notes =
+                await response.json();
+
+
+            displayNotes(notes);
+
+        } catch (error) {
+
+            alert("Search failed.");
+
+        }
+
+    }
+
+
+    /* DOWNLOAD */
+
+    function downloadNote(id) {
+
+        window.open(
+            "/api/notes/" +
+            id +
+            "/download",
+            "_blank"
+        );
+
+    }
+
+
+    /* UPLOAD */
+
+    document
+        .getElementById("uploadForm")
+        .addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const selectedSubject =
+                    document.getElementById("subjectId").value;
+
+
+                if (!selectedSubject) {
+
+                    alert("Please select a subject.");
+
+                    return;
+
+                }
+
+
+                const selectedFile =
+                    document.getElementById("file").files[0];
+
+
+                if (!selectedFile) {
+
+                    alert("Please select a PDF file.");
+
+                    return;
+
+                }
+
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "title",
+                    document.getElementById("title").value
+                );
+
+
+                formData.append(
+                    "description",
+                    document.getElementById("description").value
+                );
+
+
+                formData.append(
+                    "unitNumber",
+                    document.getElementById("unitNumber").value
+                );
+
+
+                formData.append(
+                    "studentId",
+                    studentId
+                );
+
+
+                formData.append(
+                    "subjectId",
+                    selectedSubject
+                );
+
+
+                formData.append(
+                    "file",
+                    selectedFile
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/api/notes",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    if (response.ok) {
+
+                        alert(
+                            "Note uploaded successfully!"
+                        );
+
+
+                        document
+                            .getElementById("uploadForm")
+                            .reset();
+
+
+                        loadNotes();
+
+                        loadMyNotes();
+
+                    } else {
+
+                        const error =
+                            await response.text();
+
+
+                        alert(
+                            "Upload failed: " +
+                            error
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    alert(
+                        "Server connection failed."
+                    );
+
+                }
+
+            }
+        );
+
+
+    /* MY NOTES */
+
+    async function loadMyNotes() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/notes/student/" +
+                    studentId
+                );
+
+
+            const notes =
+                await response.json();
+
+
+            document.getElementById("myNotes").textContent =
+                notes.length;
+
+
+            displayMyNotes(notes);
+
+        } catch (error) {
+
+            document.getElementById("myNotesContainer").innerHTML =
+                "<p class='message'>Unable to load your notes.</p>";
+
+        }
+
+    }
+
+
+    /* DISPLAY MY NOTES */
+
+    function displayMyNotes(notes) {
+
+        const container =
+            document.getElementById("myNotesContainer");
+
+
+        if (notes.length === 0) {
+
+            container.innerHTML =
+                "<p class='message'>You have not uploaded any notes yet.</p>";
+
+            return;
+
+        }
+
+
+        container.innerHTML = "";
+
+
+        notes.forEach(note => {
+
+            const card =
+                document.createElement("div");
+
+
+            card.className = "note-card";
+
+
+            card.innerHTML = `
+
+                <h3>
+                    📄 ${note.title}
+                </h3>
+
+                <p>
+                    Unit: ${note.unitNumber}
+                </p>
+
+                <p>
+                    Subject:
+                    ${note.subject
+                        ? note.subject.name
+                        : "Unknown"}
+                </p>
+
+                <p>
+                    ${note.description ||
+                    "No description"}
+                </p>
+
+                <div class="note-actions">
+
+                    <button
+                        class="download"
+                        onclick="downloadNote(${note.id})">
+
+                        📥 Download
+
+                    </button>
+
+                    <button
+                        class="delete"
+                        onclick="deleteNote(${note.id})">
+
+                        🗑 Delete
+
+                    </button>
+
+                </div>
+            `;
+
+
+            container.appendChild(card);
+
+        });
+
+    }
+
+
+    /* DELETE */
+
+    async function deleteNote(id) {
+
+        const confirmDelete =
+            confirm(
+                "Are you sure you want to delete this note?"
+            );
+
+
+        if (!confirmDelete) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/notes/" +
+                    id +
+                    "?studentId=" +
+                    studentId,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            if (response.ok) {
+
+                alert(
+                    "Note deleted successfully!"
+                );
+
+
+                loadNotes();
+
+                loadMyNotes();
+
+            } else {
+
+                const error =
+                    await response.text();
+
+
+                alert(error);
+
+            }
+
+        } catch (error) {
+
+            alert("Delete failed.");
+
+        }
+
+    }
+
+
+    /* RATING */
+
+    async function rateNote(id) {
+
+        const score =
+            prompt(
+                "Enter rating from 1 to 5:"
+            );
+
+
+        if (
+            score === null ||
+            score === "" ||
+            Number(score) < 1 ||
+            Number(score) > 5
+        ) {
+
+            alert(
+                "Please enter a rating between 1 and 5."
+            );
+
+            return;
+
+        }
+
+
+        const comment =
+            prompt(
+                "Enter a short comment:"
+            ) || "";
+
+
+        const rating = {
+
+            score: Number(score),
+
+            comment: comment,
+
+            student: {
+                id: Number(studentId)
+            },
+
+            note: {
+                id: id
+            }
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/ratings",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(rating)
+                    }
+                );
+
+
+            if (response.ok) {
+
+                alert(
+                    "Rating submitted successfully!"
+                );
+
+
+                loadNotes();
+
+            } else {
+
+                const error =
+                    await response.text();
+
+
+                alert(
+                    "Rating failed: " +
+                    error
+                );
+
+            }
+
+        } catch (error) {
+
+            alert(
+                "Server connection failed."
+            );
+
+        }
+
+    }
+
+
+    /* LOGOUT */
+
+    function logout() {
+
+        localStorage.removeItem("studentId");
+
+        localStorage.removeItem("studentName");
+
+        localStorage.removeItem("studentEmail");
+
+
+        window.location.href =
+            "/login.html";
+
+    }
+
+
+    /* INITIAL LOAD */
+
+    loadSubjects();
+
+    loadNotes();
+
+    loadMyNotes();
+
+</script>
+
+</body>
+
+</html>

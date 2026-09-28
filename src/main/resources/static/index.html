@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>NoteShare</title>
+
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f172a, #1e1b4b, #312e81);
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1100px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 50px;
+    }
+
+    .left {
+        max-width: 600px;
+    }
+
+    .logo {
+        font-size: 42px;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    .logo span {
+        color: #a78bfa;
+    }
+
+    h1 {
+        font-size: 48px;
+        line-height: 1.15;
+        margin-bottom: 20px;
+    }
+
+    .description {
+        color: #cbd5e1;
+        font-size: 18px;
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 15px;
+    }
+
+    button {
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .primary {
+        background: #8b5cf6;
+        color: white;
+        border: none;
+    }
+
+    .primary:hover {
+        background: #7c3aed;
+    }
+
+    .secondary {
+        background: transparent;
+        color: white;
+        border: 1px solid #64748b;
+    }
+
+    .secondary:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .card {
+        width: 330px;
+        padding: 30px;
+
+        border-radius: 20px;
+
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+
+        backdrop-filter: blur(15px);
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+        margin-bottom: 20px;
+    }
+
+    .feature {
+        padding: 15px 0;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+        color: #cbd5e1;
+    }
+
+    .feature:last-child {
+        border-bottom: none;
+    }
+
+    @media (max-width: 800px) {
+
+        .container {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .buttons {
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 330px;
+        }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="left">
+
+    <div class="logo">
+      Note<span>Share</span>
+    </div>
+
+    <h1>
+      Share Knowledge.<br>
+      Learn Together.
+    </h1>
+
+    <p class="description">
+      A centralized student notes repository where you can
+      upload, discover, rate and download academic notes easily.
+    </p>
+
+    <div class="buttons">
+
+      <button
+              class="primary"
+              onclick="location.href='/login.html'">
+        Get Started
+      </button>
+
+      <button
+              class="secondary"
+              onclick="location.href='/register.html'">
+        Create Account
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <h2>📚 NoteShare</h2>
+
+    <div class="feature">
+      📤 Upload your notes
+    </div>
+
+    <div class="feature">
+      🔍 Search by subject & unit
+    </div>
+
+    <div class="feature">
+      📥 Download study materials
+    </div>
+
+    <div class="feature">
+      ⭐ Rate useful notes
+    </div>
+
+    <div class="feature">
+      👤 Manage your uploads
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
