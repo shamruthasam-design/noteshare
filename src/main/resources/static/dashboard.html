@@ -2,7 +2,9 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard - NoteShare</title>
@@ -159,6 +161,11 @@
             cursor: pointer;
         }
 
+        .search-box button:hover,
+        .upload-btn:hover {
+            opacity: 0.9;
+        }
+
         /* UPLOAD */
 
         .form-grid {
@@ -296,6 +303,7 @@
             .search-box {
                 flex-direction: column;
             }
+
         }
 
     </style>
@@ -304,6 +312,7 @@
 
 
 <body>
+
 
 <!-- NAVBAR -->
 
@@ -329,6 +338,7 @@
 
 
 <div class="container">
+
 
     <!-- WELCOME -->
 
@@ -395,13 +405,14 @@
             <input
                     type="text"
                     id="searchInput"
-                    placeholder="Search by note title...">
+                    placeholder="Search by note title..."
+            >
 
             <button onclick="searchNotes()">
                 Search
             </button>
 
-            <button onclick="loadNotes()">
+            <button onclick="showAllNotes()">
                 Show All
             </button>
 
@@ -420,6 +431,7 @@
 
             <div class="form-grid">
 
+
                 <div class="form-group">
 
                     <label>Title</label>
@@ -428,7 +440,8 @@
                             type="text"
                             id="title"
                             placeholder="Example: DBMS Unit 1 Notes"
-                            required>
+                            required
+                    >
 
                 </div>
 
@@ -442,12 +455,11 @@
                             id="unitNumber"
                             placeholder="Example: 1"
                             min="1"
-                            required>
+                            required
+                    >
 
                 </div>
 
-
-                <!-- SUBJECT DROPDOWN -->
 
                 <div class="form-group">
 
@@ -472,7 +484,8 @@
                             type="file"
                             id="file"
                             accept=".pdf"
-                            required>
+                            required
+                    >
 
                 </div>
 
@@ -484,7 +497,8 @@
                     <textarea
                             id="description"
                             rows="3"
-                            placeholder="Short description of the notes"></textarea>
+                            placeholder="Short description of the notes"
+                    ></textarea>
 
                 </div>
 
@@ -493,7 +507,8 @@
 
             <button
                     type="submit"
-                    class="upload-btn">
+                    class="upload-btn"
+            >
 
                 Upload PDF
 
@@ -537,18 +552,30 @@
 
     </div>
 
+
 </div>
 
 
 <script>
 
-    /* GET LOGGED-IN STUDENT */
+
+    /* ========================================= */
+    /* LOGGED-IN STUDENT */
+    /* ========================================= */
 
     const studentId =
         localStorage.getItem("studentId");
 
     const studentName =
         localStorage.getItem("studentName");
+
+
+    /*
+     * This array stores every note
+     * received from the backend.
+     */
+
+    let allNotes = [];
 
 
     if (!studentId) {
@@ -566,7 +593,9 @@
         "Welcome, " + (studentName || "Student") + "!";
 
 
+    /* ========================================= */
     /* LOAD SUBJECTS */
+    /* ========================================= */
 
     async function loadSubjects() {
 
@@ -575,12 +604,19 @@
             const response =
                 await fetch("/api/subjects");
 
+
             if (!response.ok) {
-                throw new Error("Unable to load subjects");
+
+                throw new Error(
+                    "Unable to load subjects"
+                );
+
             }
+
 
             const subjects =
                 await response.json();
+
 
             document.getElementById("totalSubjects").textContent =
                 subjects.length;
@@ -588,6 +624,7 @@
 
             const subjectSelect =
                 document.getElementById("subjectId");
+
 
             subjectSelect.innerHTML =
                 '<option value="">Select Subject</option>';
@@ -598,22 +635,36 @@
                 const option =
                     document.createElement("option");
 
-                option.value = subject.id;
+
+                option.value =
+                    subject.id;
+
 
                 option.textContent =
                     subject.name +
-                    (subject.code
-                        ? " (" + subject.code + ")"
-                        : "");
+                    (
+                        subject.code
+                            ? " (" + subject.code + ")"
+                            : ""
+                    );
+
 
                 subjectSelect.appendChild(option);
 
             });
 
+
         } catch (error) {
+
+            console.error(
+                "Subject loading error:",
+                error
+            );
+
 
             document.getElementById("totalSubjects").textContent =
                 "0";
+
 
             document.getElementById("subjectId").innerHTML =
                 '<option value="">Unable to load subjects</option>';
@@ -623,7 +674,9 @@
     }
 
 
+    /* ========================================= */
     /* LOAD ALL NOTES */
+    /* ========================================= */
 
     async function loadNotes() {
 
@@ -632,15 +685,46 @@
             const response =
                 await fetch("/api/notes");
 
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load notes"
+                );
+
+            }
+
+
             const notes =
                 await response.json();
 
-            displayNotes(notes);
+
+            /*
+             * Save all notes.
+             * Search uses this array.
+             */
+
+            allNotes = notes;
+
+
+            /*
+             * Display all notes initially.
+             */
+
+            await displayNotes(allNotes);
+
 
             document.getElementById("totalNotes").textContent =
-                notes.length;
+                allNotes.length;
+
 
         } catch (error) {
+
+            console.error(
+                "Notes loading error:",
+                error
+            );
+
 
             document.getElementById("notesContainer").innerHTML =
                 "<p class='message'>Unable to load notes.</p>";
@@ -650,7 +734,9 @@
     }
 
 
+    /* ========================================= */
     /* DISPLAY NOTES */
+    /* ========================================= */
 
     async function displayNotes(notes) {
 
@@ -658,7 +744,19 @@
             document.getElementById("notesContainer");
 
 
-        if (notes.length === 0) {
+        /*
+         * IMPORTANT:
+         * Remove everything currently displayed.
+         */
+
+        container.innerHTML = "";
+
+
+        /*
+         * If there are no matching notes.
+         */
+
+        if (!notes || notes.length === 0) {
 
             container.innerHTML =
                 "<p class='message'>No notes found.</p>";
@@ -668,12 +766,19 @@
         }
 
 
-        container.innerHTML = "";
-
+        /*
+         * Display ONLY the notes passed
+         * to this function.
+         */
 
         for (const note of notes) {
 
             let averageRating = 0;
+
+
+            /*
+             * Get average rating.
+             */
 
             try {
 
@@ -684,13 +789,15 @@
                         "/average"
                     );
 
+
                 if (ratingResponse.ok) {
 
                     const ratingData =
                         await ratingResponse.json();
 
+
                     averageRating =
-                        ratingData.averageRating;
+                        ratingData.averageRating || 0;
 
                 }
 
@@ -701,10 +808,16 @@
             }
 
 
+            /*
+             * Create note card.
+             */
+
             const card =
                 document.createElement("div");
 
-            card.className = "note-card";
+
+            card.className =
+                "note-card";
 
 
             card.innerHTML = `
@@ -723,16 +836,20 @@
 
                 <p>
                     Subject:
-                    ${note.subject
-                        ? note.subject.name
-                        : "Unknown"}
+                    ${
+                        note.subject
+                            ? note.subject.name
+                            : "Unknown"
+                    }
                 </p>
 
                 <p>
                     Uploaded by:
-                    ${note.student
-                        ? note.student.name
-                        : "Unknown"}
+                    ${
+                        note.student
+                            ? note.student.name
+                            : "Unknown"
+                    }
                 </p>
 
                 <p class="rating-display">
@@ -759,6 +876,7 @@
                     </button>
 
                 </div>
+
             `;
 
 
@@ -769,51 +887,128 @@
     }
 
 
-    /* SEARCH */
+    /* ========================================= */
+    /* SEARCH NOTES */
+    /* ========================================= */
 
     async function searchNotes() {
 
-        const title =
+        const searchText =
             document
                 .getElementById("searchInput")
                 .value
-                .trim();
+                .trim()
+                .toLowerCase();
 
 
-        if (!title) {
+        /*
+         * Empty search:
+         * show all notes.
+         */
 
-            loadNotes();
+        if (searchText === "") {
+
+            await showAllNotes();
 
             return;
 
         }
 
 
-        try {
+        /*
+         * Filter the original list.
+         *
+         * Example:
+         * DBMS -> DBMS Unit 1 Notes
+         *
+         * AI -> AI Unit 1 Notes
+         */
 
-            const response =
-                await fetch(
-                    "/api/notes/search?title=" +
-                    encodeURIComponent(title)
-                );
+        const filteredNotes =
+            allNotes.filter(function(note) {
+
+                return note.title &&
+                    note.title
+                        .toLowerCase()
+                        .includes(searchText);
+
+            });
 
 
-            const notes =
-                await response.json();
+        /*
+         * IMPORTANT:
+         * Display ONLY filtered notes.
+         */
+
+        await displayNotes(filteredNotes);
 
 
-            displayNotes(notes);
+        /*
+         * Update the count.
+         */
 
-        } catch (error) {
-
-            alert("Search failed.");
-
-        }
+        document.getElementById("totalNotes").textContent =
+            filteredNotes.length;
 
     }
 
 
+    /* ========================================= */
+    /* SHOW ALL NOTES */
+    /* ========================================= */
+
+    async function showAllNotes() {
+
+        /*
+         * Clear search box.
+         */
+
+        document.getElementById("searchInput").value =
+            "";
+
+
+        /*
+         * Display the complete original list.
+         */
+
+        await displayNotes(allNotes);
+
+
+        /*
+         * Restore total count.
+         */
+
+        document.getElementById("totalNotes").textContent =
+            allNotes.length;
+
+    }
+
+
+    /* ========================================= */
+    /* ENTER KEY SEARCH */
+    /* ========================================= */
+
+    document
+        .getElementById("searchInput")
+        .addEventListener(
+            "keydown",
+            function(event) {
+
+                if (event.key === "Enter") {
+
+                    event.preventDefault();
+
+                    searchNotes();
+
+                }
+
+            }
+        );
+
+
+    /* ========================================= */
     /* DOWNLOAD */
+    /* ========================================= */
 
     function downloadNote(id) {
 
@@ -827,7 +1022,9 @@
     }
 
 
+    /* ========================================= */
     /* UPLOAD */
+    /* ========================================= */
 
     document
         .getElementById("uploadForm")
@@ -844,7 +1041,9 @@
 
                 if (!selectedSubject) {
 
-                    alert("Please select a subject.");
+                    alert(
+                        "Please select a subject."
+                    );
 
                     return;
 
@@ -857,7 +1056,9 @@
 
                 if (!selectedFile) {
 
-                    alert("Please select a PDF file.");
+                    alert(
+                        "Please select a PDF file."
+                    );
 
                     return;
 
@@ -928,9 +1129,14 @@
                             .reset();
 
 
-                        loadNotes();
+                        /*
+                         * Reload notes after upload.
+                         */
 
-                        loadMyNotes();
+                        await loadNotes();
+
+                        await loadMyNotes();
+
 
                     } else {
 
@@ -945,7 +1151,14 @@
 
                     }
 
+
                 } catch (error) {
+
+                    console.error(
+                        "Upload error:",
+                        error
+                    );
+
 
                     alert(
                         "Server connection failed."
@@ -957,7 +1170,9 @@
         );
 
 
+    /* ========================================= */
     /* MY NOTES */
+    /* ========================================= */
 
     async function loadMyNotes() {
 
@@ -970,6 +1185,15 @@
                 );
 
 
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load your notes"
+                );
+
+            }
+
+
             const notes =
                 await response.json();
 
@@ -980,7 +1204,14 @@
 
             displayMyNotes(notes);
 
+
         } catch (error) {
+
+            console.error(
+                "My notes error:",
+                error
+            );
+
 
             document.getElementById("myNotesContainer").innerHTML =
                 "<p class='message'>Unable to load your notes.</p>";
@@ -990,7 +1221,9 @@
     }
 
 
+    /* ========================================= */
     /* DISPLAY MY NOTES */
+    /* ========================================= */
 
     function displayMyNotes(notes) {
 
@@ -998,7 +1231,10 @@
             document.getElementById("myNotesContainer");
 
 
-        if (notes.length === 0) {
+        container.innerHTML = "";
+
+
+        if (!notes || notes.length === 0) {
 
             container.innerHTML =
                 "<p class='message'>You have not uploaded any notes yet.</p>";
@@ -1008,16 +1244,14 @@
         }
 
 
-        container.innerHTML = "";
-
-
         notes.forEach(note => {
 
             const card =
                 document.createElement("div");
 
 
-            card.className = "note-card";
+            card.className =
+                "note-card";
 
 
             card.innerHTML = `
@@ -1032,14 +1266,18 @@
 
                 <p>
                     Subject:
-                    ${note.subject
-                        ? note.subject.name
-                        : "Unknown"}
+                    ${
+                        note.subject
+                            ? note.subject.name
+                            : "Unknown"
+                    }
                 </p>
 
                 <p>
-                    ${note.description ||
-                    "No description"}
+                    ${
+                        note.description ||
+                        "No description"
+                    }
                 </p>
 
                 <div class="note-actions">
@@ -1061,6 +1299,7 @@
                     </button>
 
                 </div>
+
             `;
 
 
@@ -1071,7 +1310,9 @@
     }
 
 
-    /* DELETE */
+    /* ========================================= */
+    /* DELETE NOTE */
+    /* ========================================= */
 
     async function deleteNote(id) {
 
@@ -1109,9 +1350,10 @@
                 );
 
 
-                loadNotes();
+                await loadNotes();
 
-                loadMyNotes();
+                await loadMyNotes();
+
 
             } else {
 
@@ -1119,20 +1361,34 @@
                     await response.text();
 
 
-                alert(error);
+                alert(
+                    "Delete failed: " +
+                    error
+                );
 
             }
 
+
         } catch (error) {
 
-            alert("Delete failed.");
+            console.error(
+                "Delete error:",
+                error
+            );
+
+
+            alert(
+                "Delete failed."
+            );
 
         }
 
     }
 
 
+    /* ========================================= */
     /* RATING */
+    /* ========================================= */
 
     async function rateNote(id) {
 
@@ -1207,7 +1463,8 @@
                 );
 
 
-                loadNotes();
+                await loadNotes();
+
 
             } else {
 
@@ -1222,7 +1479,14 @@
 
             }
 
+
         } catch (error) {
+
+            console.error(
+                "Rating error:",
+                error
+            );
+
 
             alert(
                 "Server connection failed."
@@ -1233,15 +1497,23 @@
     }
 
 
+    /* ========================================= */
     /* LOGOUT */
+    /* ========================================= */
 
     function logout() {
 
-        localStorage.removeItem("studentId");
+        localStorage.removeItem(
+            "studentId"
+        );
 
-        localStorage.removeItem("studentName");
+        localStorage.removeItem(
+            "studentName"
+        );
 
-        localStorage.removeItem("studentEmail");
+        localStorage.removeItem(
+            "studentEmail"
+        );
 
 
         window.location.href =
@@ -1250,13 +1522,16 @@
     }
 
 
+    /* ========================================= */
     /* INITIAL LOAD */
+    /* ========================================= */
 
     loadSubjects();
 
     loadNotes();
 
     loadMyNotes();
+
 
 </script>
 
